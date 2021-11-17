@@ -1,0 +1,13 @@
+services:
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    bind:
+      array $bundleConfig: '%config_manager_client_config%'
+
+  ConfigManager\Bundle\ClientBundle\Service\ParametroService: ~
+
+  ConfigManager\Bundle\ClientBundle\Twig\ParametroExtension: ~
+
+  ConfigManager\Bundle\ClientBundle\Form\Type\ParametroType: ~
