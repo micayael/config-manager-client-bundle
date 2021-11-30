@@ -32,6 +32,10 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue(86400)
                     ->info('Tiempo de expiración automático de la cache')
                 ->end()
+                ->booleanNode('cache')
+                    ->defaultValue(true)
+                    ->info('Indica si las configuraciones deben ser cacheadas o no en la aplicación consumidora')
+                ->end()
             ->end()
         ->end();
 

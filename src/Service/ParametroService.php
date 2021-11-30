@@ -2,10 +2,7 @@
 
 namespace ConfigManager\Bundle\ClientBundle\Service;
 
-use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ParametroService
@@ -13,7 +10,7 @@ class ParametroService
     public const KEY = 'config_manager_configs';
 
     /** @required */
-    public TagAwareCacheInterface $cache;
+    public ItemInterface $cache;
 
     /** @required */
     public HttpClientInterface $httpClient;
@@ -23,26 +20,14 @@ class ParametroService
 
     public function getParametros(): ?array
     {
+        if (!$this->bundleConfig['cache']) {
+            return $this->getParametrosFromServer();
+        }
+
         $parametros = $this->cache->get(ParametroService::KEY, function (ItemInterface $item) {
             $item->expiresAfter($this->bundleConfig['cache_timeout']);
 
-            $uri = $this->bundleConfig['host'].$this->bundleConfig['entrypoint'];
-
-            $response = $this->httpClient->request('GET', $uri, [
-                'headers' => [
-                    'X-TOKEN-APP' => $this->bundleConfig['app_token']
-                ],
-            ]);
-
-            $params = json_decode($response->getContent(), true);
-
-            $parametros = [];
-
-            foreach ($params as $param) {
-                $parametros[$param['dominio']][$param['codigo']] = $param['valor'];
-            }
-
-            return $parametros;
+            $ret = $this->getParametrosFromServer();
         });
 
         return $parametros;
@@ -74,5 +59,26 @@ class ParametroService
     public function delete()
     {
         $this->cache->delete(ParametroService::KEY);
+    }
+
+    private function getParametrosFromServer()
+    {
+        $uri = $this->bundleConfig['host'].$this->bundleConfig['entrypoint'];
+
+        $response = $this->httpClient->request('GET', $uri, [
+            'headers' => [
+                'X-TOKEN-APP' => $this->bundleConfig['app_token'],
+            ],
+        ]);
+
+        $params = json_decode($response->getContent(), true);
+
+        $parametros = [];
+
+        foreach ($params as $param) {
+            $parametros[$param['dominio']][$param['codigo']] = $param['valor'];
+        }
+
+        return $parametros;
     }
 }
