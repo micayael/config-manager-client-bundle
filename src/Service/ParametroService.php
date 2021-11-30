@@ -3,6 +3,7 @@
 namespace ConfigManager\Bundle\ClientBundle\Service;
 
 use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -11,7 +12,7 @@ class ParametroService
     public const KEY = 'config_manager_configs';
 
     /** @required */
-    public AdapterInterface $cache;
+    public FilesystemAdapter $cache;
 
     /** @required */
     public HttpClientInterface $httpClient;
