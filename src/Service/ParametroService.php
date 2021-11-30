@@ -3,6 +3,7 @@
 namespace ConfigManager\Bundle\ClientBundle\Service;
 
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ParametroService
@@ -10,7 +11,7 @@ class ParametroService
     public const KEY = 'config_manager_configs';
 
     /** @required */
-    public ItemInterface $cache;
+    public TagAwareCacheInterface $cache;
 
     /** @required */
     public HttpClientInterface $httpClient;
