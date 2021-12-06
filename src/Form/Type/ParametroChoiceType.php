@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ParametroType extends AbstractType
+class ParametroChoiceType extends AbstractType
 {
     /** @required */
     public ParametroService $parametroService;
@@ -19,13 +19,13 @@ class ParametroType extends AbstractType
         $resolver->setRequired('dominio');
         $resolver->setAllowedTypes('dominio', 'string');
 
-        $resolver->setDefault('codigo', null);
-
         $resolver->setDefaults([
             'placeholder' => 'crud.form.choice_placeholder',
             'translation_domain' => 'MicayaelCrudBundle',
             'choice_loader' => function (Options $options) {
-                $data = $this->parametroService->getParametro($options['dominio'], $options['codigo']);
+                $data = $this->parametroService->getParametro($options['dominio']);
+
+                $data = array_shift($data);
 
                 return new CallbackChoiceLoader(function () use ($data) {
                     return array_combine($data, $data);
